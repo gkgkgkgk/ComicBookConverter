@@ -15,7 +15,7 @@ def speech_to_text(dir_path):
 
             text = r.recognize_google(audio_text)
 
-            with open(os.path.join(dir_path, "text_" + str(i+1)) + ".txt", 'w') as f:
+            with open(os.path.join(dir_path + "\\text", "text_" + str(i+1)) + ".txt", 'w') as f:
                 f.write(text)
 
         except:
