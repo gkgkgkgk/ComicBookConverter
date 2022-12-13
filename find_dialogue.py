@@ -1,5 +1,6 @@
 from difflib import SequenceMatcher
 import os
+import re
 
 def parse_script(script_path):
     lines = []
@@ -8,25 +9,31 @@ def parse_script(script_path):
         lines = [line.split(':') for line in all_lines]
         for line in lines:
             line[1] = line[1][1:-1]
-
     return lines
 
-def get_dialogue(text_dir, lines):
+def match_dialogue(dir_path,script_path):
+    script_lines = parse_script(script_path)
 
-    for filename in os.listdir(text_dir):
-        file = os.path.join(text_dir,filename)
+    speech_text_path = os.path.join(dir_path, "speech_text")
+    for filename in os.listdir(speech_text_path):
+
+        file = os.path.join(speech_text_path,filename)
         f = open(file,"r+")
-        speech_line = f.readline()
-        closest_line = []
-        best_ratio = 0
+        speech_lines = f.readlines()
 
-        for line in lines:
-            ratio = SequenceMatcher(None, speech_line, line[1]).ratio()
-            if ratio > best_ratio:
-                closest_line = line
-                best_ratio = ratio
+        with open(os.path.join(dir_path + "/matched_text", filename), 'w') as f1:
+            for character_line in speech_lines:
+                character_line = character_line[:-1]
+                closest_line = []
+                best_ratio = 0
+                for script_line in script_lines:
+                    ratio = SequenceMatcher(None, character_line[:-1], script_line[1]).ratio()
+                    if ratio > best_ratio:
+                        closest_line = script_line
+                        best_ratio = ratio
 
-        f.write("\n" + closest_line[0] + ": " + closest_line[1])
+                f1.write(closest_line[0] + ": " + closest_line[1] + "\n")
 
-get_dialogue("grand/text", parse_script("grand_script.txt"))
-# print(similar("chocolate fountain", "Oh! Idea! Chocolate Fountains."))
+
+# script_lines = parse_script("infinity_script.txt")
+# match_dialogue("infinity", "infinity_script.txt")

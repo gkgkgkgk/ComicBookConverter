@@ -9,7 +9,8 @@ def init_video(name):
     os.mkdir(os.path.join(name,"audio"))
     os.mkdir(os.path.join(name,"frames"))
     os.mkdir(os.path.join(name,"temp"))
-    os.mkdir(os.path.join(name,"text"))
+    os.mkdir(os.path.join(name,"speech_text"))
+    os.mkdir(os.path.join(name,"matched_text"))
 
     return name
 
