@@ -9,17 +9,14 @@ def generate_page(video_name, max_width = 2):
 
     image_paths = os.listdir(video_name + "/speech_frames")
 
-    scores = []
-    for path in image_paths:
-        scores.append(get_img_aesthetic_score(cv2.imread(video_name + "/speech_frames/" + path), video_name + "/speech_frames/" + path))
-
     small_width = int((2400 - 200 - ((max_width - 1) * 50)) / max_width)
 
     row_count = 0
     column_count = 0
     page_height = 0
     for i, path in enumerate(image_paths):
-        image = Image.open(video_name + "/speech_frames/" + path)
+        image_path = os.path.join(video_name, ("speech_frames/speechframe_" + str(i+1) + ".jpg"))
+        image = Image.open(image_path)
         if row_count >= max_width:
             column_count += 1
             row_count = 0

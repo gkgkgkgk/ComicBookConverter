@@ -5,19 +5,33 @@ import textwrap
 import os
 
 def add_speech(video_name, locs):
-    for i, text_path in enumerate(os.listdir(video_name + "/matched_text")):
-        text_file = open(video_name + "/matched_text/" + text_path, "r")
-        text = text_file.read()
+    text_dir = "speech_text"
+    if len(os.listdir(video_name + "/matched_text")) > 0:
+        text_dir = "matched_text"
+
+    for i in range(len(os.listdir(video_name + "/cartoon_frames"))):
+        path = video_name + "/"+text_dir+"/text_" + str(i+1) + ".txt"
         image_path = video_name + "/cartoon_frames/keyframe_scene_"+str(i+1)+".jpg"
-
         img = Image.open(image_path)
-        draw = ImageDraw.Draw(img)
-        wh = (img.width, img.height)
-        if text != "":
-            create_bubble(draw, text, locs[i], wh)
-        img.save(video_name + '/speech_frames'+'/speechframe_'+str(i)+'.jpg')
+        if os.path.exists(path):
+            text_file = open(path, "r")
+            text = text_file.read()
 
-def create_bubble(draw, text, loc, wh):
+            draw = ImageDraw.Draw(img)
+            wh = (img.width, img.height)
+
+            lines = text.split('\n')
+            lines = [value for value in lines if value != ""]
+            if len(lines) == 0:
+                create_bubble(draw, line, locs[j], wh, 0)
+
+            pos = (50, 50)
+            for j, line in enumerate(lines):
+                pos = create_bubble(draw, line, locs[j], wh, j, seq=True, pos=pos, total_lines=len(lines))
+
+        img.save(video_name + '/speech_frames'+'/speechframe_'+str(i+1)+'.jpg')
+
+def create_bubble(draw, text, loc, wh, index, seq=False, pos=(50,50), total_lines=0):
     font = ImageFont.truetype("lib/fonts/Comic Book.otf", 24)
     wrapped = textwrap.wrap(text, width=30)
     if len(wrapped) == 0:
@@ -36,12 +50,21 @@ def create_bubble(draw, text, loc, wh):
             font_bbox[3] = bbox[3]
     
     font_height = abs(font_bbox[1] - font_bbox[3])
-    position = get_position(loc, wh, (abs(font_bbox[0] - font_bbox[2]), font_height*(len(wrapped) + 1)))
+    
+    if seq == False:
+        position = get_position(loc, wh, (abs(font_bbox[0] - font_bbox[2]), font_height*(len(wrapped) + 1)))
+    else:
+        if index != 0:
+            position = (pos[0], pos[1] + 4 * font_height + 40)
+        else:
+            position = get_position(loc, wh, (abs(font_bbox[0] - font_bbox[2]), font_height*(total_lines + 1)))
 
     draw.rounded_rectangle([(position[0] - 20, position[1] - 20), (20 + position[0] + abs(font_bbox[0] - font_bbox[2]), 20 + position[1] + font_height*(len(wrapped) + 1))], radius=0, fill="white", outline ="black", width = 2)
 
     for i, line in enumerate(wrapped):
         draw.text((position[0], position[1] + (i * font_height)),line,(0,0,0),font=font)
+    
+    return position
 
 def get_position(loc, img_wh, wh):
     min_box = [1000000,1000000,0,0]
