@@ -5,7 +5,7 @@ from keyframe_extract import get_img_aesthetic_score
 import cv2
 
 width = 2400
-height = 1000
+height = 4000
 
 def generate_page(video_name, max_width = 2):
     pages = []
