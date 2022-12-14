@@ -22,6 +22,7 @@ def match_dialogue(dir_path,script_path):
         speech_lines = f.readlines()
 
         with open(os.path.join(dir_path + "/matched_text", filename), 'w') as f1:
+            previous_line = ""
             for character_line in speech_lines:
                 character_line = character_line[:-1]
                 closest_line = []
@@ -31,8 +32,10 @@ def match_dialogue(dir_path,script_path):
                     if ratio > best_ratio:
                         closest_line = script_line
                         best_ratio = ratio
-
-                f1.write(closest_line[0] + ": " + closest_line[1] + "\n")
+                new_line = closest_line[0] + ": " + closest_line[1] + "\n"
+                if new_line != previous_line:
+                    f1.write(closest_line[0] + ": " + closest_line[1] + "\n")
+                previous_line = new_line
 
 
 # script_lines = parse_script("infinity_script.txt")

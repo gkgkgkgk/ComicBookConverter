@@ -22,12 +22,14 @@ def add_speech(video_name, locs):
 
             lines = text.split('\n')
             lines = [value for value in lines if value != ""]
-            if len(lines) == 0:
-                create_bubble(draw, line, locs[j], wh, 0)
 
-            pos = (50, 50)
-            for j, line in enumerate(lines):
-                pos = create_bubble(draw, line, locs[j], wh, j, seq=True, pos=pos, total_lines=len(lines))
+            if len(lines) == 1:
+                create_bubble(draw, lines[0], locs[i], wh, 0)
+
+            else:
+                pos = (50, 50)
+                for j, line in enumerate(lines):
+                    pos = create_bubble(draw, line, locs[i], wh, j, seq=True, pos=pos, total_lines=len(lines))
 
         img.save(video_name + '/speech_frames'+'/speechframe_'+str(i+1)+'.jpg')
 
@@ -64,28 +66,36 @@ def create_bubble(draw, text, loc, wh, index, seq=False, pos=(50,50), total_line
     for i, line in enumerate(wrapped):
         draw.text((position[0], position[1] + (i * font_height)),line,(0,0,0),font=font)
     
+    print(position)
     return position
 
 def get_position(loc, img_wh, wh):
     min_box = [1000000,1000000,0,0]
-    for face in loc[0]:
-        if face[0] < min_box[0]:
-            min_box[0] = face[0]
-        if face[1] < min_box[1]:
-            min_box[1] = face[1]
-        if face[2] > min_box[2]:
-            min_box[2] = face[2]
-        if face[3] > min_box[3]:
-            min_box[3] = face[3]
-    for person in loc[1]:
-        if person[0] < min_box[0]:
-            min_box[0] = person[0]
-        if person[1] < min_box[1]:
-            min_box[1] = person[1]
-        if person[2] > min_box[2]:
-            min_box[2] = person[2]
-        if person[3] > min_box[3]:
-            min_box[3] = person[3]
+
+    if len(loc[0]) > 0:
+        for face in loc[0]:
+            if face[0] < min_box[0]:
+                min_box[0] = face[0]
+            if face[1] < min_box[1]:
+                min_box[1] = face[1]
+            if face[2] > min_box[2]:
+                min_box[2] = face[2]
+            if face[3] > min_box[3]:
+                min_box[3] = face[3]
+    if len(loc[1]) > 0:
+        for person in loc[1]:
+            if person[0] < min_box[0]:
+                min_box[0] = person[0]
+            if person[1] < min_box[1]:
+                min_box[1] = person[1]
+            if person[2] > min_box[2]:
+                min_box[2] = person[2]
+            if person[3] > min_box[3]:
+                min_box[3] = person[3]
+
+    print(len(loc[1]), len(loc[0]))
+    if len(loc[1]) == 0 and len(loc[0]) == 0:
+        return (50, 50)
 
     x = 0
     if min_box[0] > wh[0]:
@@ -103,5 +113,5 @@ def get_position(loc, img_wh, wh):
     else:
         y = min_box[1]
     
-    return (x,y)
+    return (max(x, 30),max(y, 30))
 

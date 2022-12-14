@@ -28,4 +28,4 @@ def generate(video_name, video_path, script_path=""):
     generate_page(video_name)
     print("Done!")
 
-generate("frisch", "videos/frisch.mp4", script_path="scripts/frisch_script.txt")
+generate("polar", "videos/polar.mp4", script_path="scripts/polar_script.txt")
