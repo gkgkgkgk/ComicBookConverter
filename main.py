@@ -12,7 +12,7 @@ def generate(video_name, video_path, script_path=""):
     print("Initializing Video...")
     video = init_video(video_name)
     print("Splitting frames and audio...")
-    scene.get_key_frames_and_audio(video_path, video, skip=10)
+    scene.get_key_frames_and_audio(video_path, video, skip=50)
     print("Cartoonizing Frames...")
     cartoon.cartoon_img(video_name)
     print("Converting audio to text...")
@@ -28,4 +28,4 @@ def generate(video_name, video_path, script_path=""):
     generate_page(video_name)
     print("Done!")
 
-generate("polar", "videos/polar.mp4", script_path="scripts/polar_script.txt")
+generate("grand", "grand5.mp4", script_path="grand5_script.txt")
