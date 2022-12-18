@@ -18,7 +18,7 @@ def detect_face_or_body(video_name):
         faces, confidences = cv.detect_face(image)
         boxes.append(faces)
         label = ['person'] * len(faces)
-
+        out = draw_bbox(image, faces, label, confidences, write_conf = True)
         
         # detecting objects
         bbox, labels, conf = cv.detect_common_objects(image)
@@ -30,6 +30,8 @@ def detect_face_or_body(video_name):
         l = ['person'] * len(people)
         boxes.append(people)
         locs.append(boxes)
+        output_image = draw_bbox(out, people, l, c, write_conf = True)
+        cv2.imwrite("bbox" + str(i+1) + ".jpg", output_image)
 
 
     return locs
